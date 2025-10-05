@@ -1,7 +1,12 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-app = FastAPI(title="SecDev Course App", version="0.1.0")
+from app.dto.dto import RecipeCreate, RecipeOut, RecipeUpdate
+from app.infrastructure.db import RecipeRepo
+from app.services.service import RecipeService
+
+app = FastAPI(title="RecipeBox App", version="0.1.0")
 
 
 class ApiError(Exception):
@@ -21,11 +26,19 @@ async def api_error_handler(request: Request, exc: ApiError):
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
-    # Normalize FastAPI HTTPException into our error envelope
     detail = exc.detail if isinstance(exc.detail, str) else "http_error"
     return JSONResponse(
         status_code=exc.status_code,
         content={"error": {"code": "http_error", "message": detail}},
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    first = exc.errors()[0] if exc.errors() else {}
+    msg = first.get("msg", "validation error")
+    return JSONResponse(
+        status_code=422, content={"error": {"code": "validation_error", "message": msg}}
     )
 
 
@@ -34,24 +47,68 @@ def health():
     return {"status": "ok"}
 
 
-# Example minimal entity (for tests/demo)
-_DB = {"items": []}
+_repo = RecipeRepo()
+_service = RecipeService(_repo)
 
 
-@app.post("/items")
-def create_item(name: str):
-    if not name or len(name) > 100:
-        raise ApiError(
-            code="validation_error", message="name must be 1..100 chars", status=422
+@app.post("/recipes", response_model=RecipeOut, status_code=201)
+def create_recipe(payload: RecipeCreate):
+    try:
+        ingredients = [i.to_entity() for i in payload.ingredients]
+        recipe = _service.create_recipe(
+            name=payload.name,
+            ingredients=ingredients,
+            total_time=payload.total_time,
+            description=payload.description,
         )
-    item = {"id": len(_DB["items"]) + 1, "name": name}
-    _DB["items"].append(item)
-    return item
+        return RecipeOut.from_entity(recipe)
+    except ValueError as e:
+        raise ApiError(code="conflict", message=str(e), status=409)
+    except Exception as e:
+        raise ApiError(code="internal_error", message=str(e), status=500)
 
 
-@app.get("/items/{item_id}")
-def get_item(item_id: int):
-    for it in _DB["items"]:
-        if it["id"] == item_id:
-            return it
-    raise ApiError(code="not_found", message="item not found", status=404)
+@app.get("/recipes", response_model=list[RecipeOut])
+def list_recipes():
+    return [RecipeOut.from_entity(r) for r in _service.all_recipes()]
+
+
+@app.get("/recipes/{name}", response_model=RecipeOut)
+def get_recipe(name: str):
+    try:
+        r = _service.get_recipe_by_name(name)
+        return RecipeOut.from_entity(r)
+    except KeyError:
+        raise ApiError(code="not_found", message="recipe not found", status=404)
+    except Exception as e:
+        raise ApiError(code="internal_error", message=str(e), status=500)
+
+
+@app.put("/recipes/{name}", response_model=RecipeOut)
+def update_recipe(name: str, payload: RecipeUpdate):
+    try:
+        ingredients = None
+        if payload.ingredients is not None:
+            ingredients = [i.to_entity() for i in payload.ingredients]
+        updated = _service.update_recipe(
+            name=name,
+            ingredients=ingredients,
+            total_time=payload.total_time,
+            description=payload.description,
+        )
+        return RecipeOut.from_entity(updated)
+    except KeyError:
+        raise ApiError(code="not_found", message="recipe not found", status=404)
+    except Exception as e:
+        raise ApiError(code="internal_error", message=str(e), status=500)
+
+
+@app.delete("/recipes/{name}", status_code=204)
+def delete_recipe(name: str):
+    try:
+        _service.delete_recipe(name)
+        return JSONResponse(status_code=204, content=None)
+    except KeyError:
+        raise ApiError(code="not_found", message="recipe not found", status=404)
+    except Exception as e:
+        raise ApiError(code="internal_error", message=str(e), status=500)
