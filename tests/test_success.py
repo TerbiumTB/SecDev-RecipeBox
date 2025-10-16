@@ -47,7 +47,7 @@ def test_update_recipe_success():
     client.post("/recipes", json=data)
 
     update_data = {"description": "Hot tasty soup."}
-    r = client.put("/recipes/Soup", json=update_data)
+    r = client.patch("/recipes/Soup", json=update_data)
     assert r.status_code == 200
     assert r.json()["description"] == "Hot tasty soup."
 

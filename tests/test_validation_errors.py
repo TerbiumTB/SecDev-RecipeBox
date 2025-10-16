@@ -38,5 +38,6 @@ def test_update_recipe_invalid_field_type():
     }
     client.post("/recipes", json=data)
 
-    r = client.put("/recipes/Cake", json={"total_time": "sixty"})
+    r = client.patch("/recipes/Cake", json={"total_time": "sixty"})
+    print(r)
     assert r.status_code in (400, 422)

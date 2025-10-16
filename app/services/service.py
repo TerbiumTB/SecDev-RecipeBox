@@ -1,4 +1,5 @@
 from app.infrastructure.db import RecipeRepo
+from app.models.errors import NotFoundApiError
 from app.models.models import Ingredient, Recipe
 
 
@@ -13,8 +14,6 @@ class RecipeService:
         total_time: int,
         description: str,
     ) -> Recipe:
-        if self.repo.find(name) is not None:
-            return False
 
         recipe = Recipe(name, ingredients, total_time, description)
         self.repo.add(recipe)
@@ -22,8 +21,10 @@ class RecipeService:
 
     def get_recipe_by_name(self, name: str) -> Recipe:
         recipe = self.repo.find(name)
+
         if not recipe:
-            raise KeyError("not_found")
+            raise NotFoundApiError(f"Recipe {name} not found")
+
         return recipe
 
     def update_recipe(

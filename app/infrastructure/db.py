@@ -1,3 +1,4 @@
+from app.models.errors import InternalApiError, NotFoundApiError
 from app.models.models import Ingredient, Recipe
 
 
@@ -7,12 +8,12 @@ class RecipeRepo:
 
     def add(self, recipe: Recipe) -> None:
         if recipe.name in self._db:
-            raise ValueError("already_exists")
+            raise InternalApiError(f"Recipe {recipe.name} already exists")
         self._db[recipe.name] = recipe
 
     def delete(self, name: str) -> None:
         if name not in self._db:
-            raise KeyError("not_found")
+            raise NotFoundApiError(f"Recipe {name} not found")
         del self._db[name]
 
     def update(
@@ -23,7 +24,7 @@ class RecipeRepo:
         description: str | None = None,
     ) -> Recipe:
         if name not in self._db:
-            raise KeyError("not_found")
+            raise NotFoundApiError(f"Recipe {name} not found")
 
         recipe = self._db[name]
         if ingredients is not None:

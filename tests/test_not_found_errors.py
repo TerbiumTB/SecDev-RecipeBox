@@ -12,7 +12,7 @@ def test_get_nonexistent_recipe():
 
 
 def test_update_nonexistent_recipe():
-    r = client.put("/recipes/NoSuchRecipe", json={"description": "Does not exist."})
+    r = client.patch("/recipes/NoSuchRecipe", json={"description": "Does not exist."})
     assert r.status_code == 404
     assert r.json()["error"]["code"] == "not_found"
 
