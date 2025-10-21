@@ -5,7 +5,8 @@ from app.models.models import Ingredient, Recipe
 
 class IngredientIn(BaseModel):
     name: str = Field(..., min_length=1)
-    amount: str = Field(..., min_length=1)
+    amount: int = Field(..., gt=0)
+    units: str = Field(..., min_length=1)
 
     def to_entity(self) -> Ingredient:
         return Ingredient(**self.model_dump())
@@ -26,7 +27,8 @@ class RecipeUpdate(BaseModel):
 
 class IngredientOut(BaseModel):
     name: str
-    amount: str
+    amount: int
+    units: str
 
     # def __init__():
     @classmethod

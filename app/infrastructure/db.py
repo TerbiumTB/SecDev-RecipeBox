@@ -1,20 +1,31 @@
-from app.models.errors import InternalApiError, NotFoundApiError
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.infrastructure.repo import IRecipeRepo
+from app.models.errors import NotFoundApiError
 from app.models.models import Ingredient, Recipe
+from app.schemas import orm
 
 
-class RecipeRepo:
-    def __init__(self):
-        self._db: dict[str, Recipe] = dict()
+class RecipeDB(IRecipeRepo):
+    def __init__(self, session: Session):
+        self.session = session
 
     def add(self, recipe: Recipe) -> None:
-        if recipe.name in self._db:
-            raise InternalApiError(f"Recipe {recipe.name} already exists")
-        self._db[recipe.name] = recipe
+        self.session.add(orm.Recipe.from_entity(recipe))
+        self.session.commit()
 
     def delete(self, name: str) -> None:
-        if name not in self._db:
+        recipe = (
+            self.session.execute(select(orm.Recipe).where(orm.Recipe.name == name))
+            .unique()
+            .scalar_one_or_none()
+        )
+        if not recipe:
             raise NotFoundApiError(f"Recipe {name} not found")
-        del self._db[name]
+
+        self.session.delete(recipe)
+        self.session.commit()
 
     def update(
         self,
@@ -23,23 +34,37 @@ class RecipeRepo:
         total_time: int | None = None,
         description: str | None = None,
     ) -> Recipe:
-        if name not in self._db:
+        recipe = (
+            self.session.execute(select(orm.Recipe).where(orm.Recipe.name == name))
+            .unique()
+            .scalar_one_or_none()
+        )
+        if not recipe:
             raise NotFoundApiError(f"Recipe {name} not found")
 
-        recipe = self._db[name]
         if ingredients is not None:
             recipe.ingredients = ingredients
-
         if total_time is not None:
             recipe.total_time = total_time
-
         if description is not None:
             recipe.description = description
 
-        return recipe
+        self.session.commit()
+        self.session.refresh(recipe)
+        return recipe.to_entity()
 
     def find(self, name: str) -> Recipe | None:
-        return self._db.get(name)
+        recipe = (
+            self.session.execute(select(orm.Recipe).where(orm.Recipe.name == name))
+            .unique()
+            .scalar_one_or_none()
+        )
+        if recipe:
+            return recipe.to_entity()
+        return None
 
     def all(self) -> list[Recipe]:
-        return list(self._db.values())
+        recipes = list(
+            self.session.execute(select(orm.Recipe)).unique().scalars().all()
+        )
+        return [*map(orm.Recipe.to_entity, recipes)]

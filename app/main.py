@@ -2,11 +2,12 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.infrastructure.db import RecipeRepo
+from app.infrastructure.db import RecipeDB
 from app.models.errors import ApiError, InternalApiError
 from app.schemas.dto import RecipeCreate, RecipeOut, RecipeUpdate
 from app.schemas.errors import ApiErrorResponse
 from app.services.service import RecipeService
+from app.shared.sqlite import get_local_session
 
 app = FastAPI(title="RecipeBox App", version="0.1.0")
 
@@ -39,13 +40,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     return err.to_json()
 
 
+_session = get_local_session()
+_repo = RecipeDB(_session)
+_service = RecipeService(_repo)
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
-
-
-_repo = RecipeRepo()
-_service = RecipeService(_repo)
 
 
 @app.post(
@@ -70,7 +72,7 @@ def create_recipe(payload: RecipeCreate):
     except ApiError:
         raise
     except Exception as e:
-        print(e)
+        print("here")
         raise InternalApiError(e)
 
 
@@ -94,6 +96,7 @@ def get_recipe(name: str):
     except ApiError:
         raise
     except Exception as e:
+        print(e)
         raise InternalApiError(e)
 
 
@@ -121,6 +124,7 @@ def update_recipe(name: str, payload: RecipeUpdate):
     except ApiError:
         raise
     except Exception as e:
+        print(e)
         raise InternalApiError(e)
 
 
@@ -139,6 +143,7 @@ def delete_recipe(name: str):
     except ApiError:
         raise
     except Exception as e:
+        print(e)
         raise InternalApiError(e)
 
 

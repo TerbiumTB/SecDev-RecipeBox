@@ -8,7 +8,7 @@ client = TestClient(app)
 def test_create_recipe_empty_name():
     data = {
         "name": "",
-        "ingredients": [{"name": "sugar", "amount": "10g"}],
+        "ingredients": [{"name": "sugar", "amount": 10, "units": "g"}],
         "total_time": 10,
         "description": "Bad recipe.",
     }
@@ -20,7 +20,7 @@ def test_create_recipe_empty_name():
 def test_create_recipe_too_long_name():
     data = {
         "name": "x" * 101,
-        "ingredients": [{"name": "salt", "amount": "1g"}],
+        "ingredients": [{"name": "salt", "amount": 1, "units": "g"}],
         "total_time": 10,
         "description": "Too long name.",
     }
@@ -32,7 +32,7 @@ def test_create_recipe_too_long_name():
 def test_update_recipe_invalid_field_type():
     data = {
         "name": "Cake",
-        "ingredients": [{"name": "flour", "amount": "100g"}],
+        "ingredients": [{"name": "flour", "amount": 100, "units": "g"}],
         "total_time": 60,
         "description": "Sweet cake.",
     }
