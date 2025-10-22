@@ -1,6 +1,6 @@
-from app.infrastructure.repo import IRecipeRepo
-from app.models.errors import NotFoundApiError
-from app.models.models import Ingredient, Recipe
+from app.models.domain import Ingredient, Recipe
+from app.models.error import NotFoundApiError
+from app.repos.repo import IRecipeRepo
 
 
 class RecipeService:

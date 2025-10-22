@@ -1,5 +1,6 @@
 init:
-	pip install -r requirements.txt
+	pip install -r requirements-dev.txt
+	pre-commit install
 
 lint:
 	ruff check --fix .
@@ -13,6 +14,7 @@ coverage:
 	pytest --cov=app tests/
 
 check: lint test
+	pre-commit run --all-files
 
 run:
 	uvicorn app.main:app --reload

@@ -1,6 +1,6 @@
-from app.infrastructure.repo import IRecipeRepo
-from app.models.errors import InternalApiError, NotFoundApiError
-from app.models.models import Ingredient, Recipe
+from app.models.domain import Ingredient, Recipe
+from app.models.error import InternalApiError, NotFoundApiError
+from app.repos.repo import IRecipeRepo
 
 
 class RecipeMap(IRecipeRepo):

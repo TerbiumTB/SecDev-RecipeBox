@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy import ForeignKey, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-from app.models import models
+from app.models import domain
 
 
 class Base(DeclarativeBase):
@@ -23,8 +23,8 @@ class Recipe(Base):
         lazy="joined",
     )
 
-    def to_entity(self) -> models.Recipe:
-        return models.Recipe(
+    def to_entity(self) -> domain.Recipe:
+        return domain.Recipe(
             name=self.name,
             ingredients=[_.to_entity() for _ in self.ingredients],
             total_time=self.total_time,
@@ -32,7 +32,7 @@ class Recipe(Base):
         )
 
     @classmethod
-    def from_entity(self, entity: models.Recipe) -> "Recipe":
+    def from_entity(self, entity: domain.Recipe) -> "Recipe":
         recipe = self()
         recipe.name = entity.name
         recipe.ingredients = [Ingredient.from_entity(_) for _ in entity.ingredients]
@@ -51,11 +51,11 @@ class Ingredient(Base):
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipes.id"), nullable=False)
     recipe: Mapped["Recipe"] = relationship(back_populates="ingredients")
 
-    def to_entity(self) -> models.Ingredient:
-        return models.Ingredient(self.name, self.amount, self.units)
+    def to_entity(self) -> domain.Ingredient:
+        return domain.Ingredient(self.name, self.amount, self.units)
 
     @classmethod
-    def from_entity(self, entity: models.Ingredient) -> "Ingredient":
+    def from_entity(self, entity: domain.Ingredient) -> "Ingredient":
         ingredient = self()
         ingredient.name = entity.name
         ingredient.amount = entity.amount

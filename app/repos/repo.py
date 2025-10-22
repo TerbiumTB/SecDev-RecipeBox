@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models.models import Ingredient, Recipe
+from app.models.domain import Ingredient, Recipe
 
 
 class IRecipeRepo(ABC):

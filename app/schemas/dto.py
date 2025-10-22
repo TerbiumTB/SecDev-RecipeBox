@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.models.models import Ingredient, Recipe
+from app.models.domain import Ingredient, Recipe
 
 
 class IngredientIn(BaseModel):

@@ -1,9 +1,9 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.infrastructure.repo import IRecipeRepo
-from app.models.errors import NotFoundApiError
-from app.models.models import Ingredient, Recipe
+from app.models.domain import Ingredient, Recipe
+from app.models.error import NotFoundApiError
+from app.repos.repo import IRecipeRepo
 from app.schemas import orm
 
 
