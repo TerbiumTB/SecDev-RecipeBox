@@ -1,35 +1,42 @@
-# SecDev Course Template
+# Recipe Box
 
-Стартовый шаблон для студенческого репозитория (HSE SecDev 2025).
+API для хранения рецептов.
 
-## Быстрый старт
+## Usage
+Все команды рекомендуется запускать из внутри virualenv.
+### Быстрый старт
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt -r requirements-dev.txt
-pre-commit install
-uvicorn app.main:app --reload
+make init
+make run
 ```
 
-## Ритуал перед PR
+Open API находится по адресу: http://127.0.0.1:8000/docs#
+
+### Ритуал перед PR
 ```bash
-ruff --fix .
-black .
-isort .
-pytest -q
-pre-commit run --all-files
+make lint
+make test
+```
+или
+```bash
+make check
 ```
 
-## Тесты
+### Тесты
 ```bash
-pytest -q
+make test
 ```
+или
+```bash
+make coverage
+```
+<!--
 
-## CI
+### CI
 В репозитории настроен workflow **CI** (GitHub Actions) — required check для `main`.
 Badge добавится автоматически после загрузки шаблона в GitHub.
 
-## Контейнеры
+### Контейнеры
 ```bash
 docker build -t secdev-app .
 docker run --rm -p 8000:8000 secdev-app
@@ -37,12 +44,12 @@ docker run --rm -p 8000:8000 secdev-app
 docker compose up --build
 ```
 
-## Эндпойнты
+### Эндпойнты
 - `GET /health` → `{"status": "ok"}`
 - `POST /items?name=...` — демо-сущность
 - `GET /items/{id}`
 
-## Формат ошибок
+### Формат ошибок
 Все ошибки — JSON-обёртка:
 ```json
 {
@@ -50,4 +57,4 @@ docker compose up --build
 }
 ```
 
-См. также: `SECURITY.md`, `.pre-commit-config.yaml`, `.github/workflows/ci.yml`.
+См. также: `SECURITY.md`, `.pre-commit-config.yaml`, `.github/workflows/ci.yml`. -->

@@ -1,14 +1,10 @@
 from fastapi.testclient import TestClient
 
-from app.main import app
 
-client = TestClient(app)
-
-
-def test_create_recipe_empty_name():
+def test_create_recipe_empty_name(client: TestClient):
     data = {
         "name": "",
-        "ingredients": [{"name": "sugar", "amount": "10g"}],
+        "ingredients": [{"name": "sugar", "amount": 10, "units": "g"}],
         "total_time": 10,
         "description": "Bad recipe.",
     }
@@ -17,10 +13,10 @@ def test_create_recipe_empty_name():
     assert r.json()["error"]["code"] == "validation_error"
 
 
-def test_create_recipe_too_long_name():
+def test_create_recipe_too_long_name(client: TestClient):
     data = {
         "name": "x" * 101,
-        "ingredients": [{"name": "salt", "amount": "1g"}],
+        "ingredients": [{"name": "salt", "amount": 1, "units": "g"}],
         "total_time": 10,
         "description": "Too long name.",
     }
@@ -29,10 +25,10 @@ def test_create_recipe_too_long_name():
     assert r.json()["error"]["code"] == "validation_error"
 
 
-def test_update_recipe_invalid_field_type():
+def test_update_recipe_invalid_field_type(client: TestClient):
     data = {
         "name": "Cake",
-        "ingredients": [{"name": "flour", "amount": "100g"}],
+        "ingredients": [{"name": "flour", "amount": 100, "units": "g"}],
         "total_time": 60,
         "description": "Sweet cake.",
     }

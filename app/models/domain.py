@@ -1,7 +1,8 @@
 class Ingredient:
-    def __init__(self, name: str, amount: str):
+    def __init__(self, name: str, amount: int, units: str):
         self.name = name
         self.amount = amount
+        self.units = units
 
 
 class Recipe:

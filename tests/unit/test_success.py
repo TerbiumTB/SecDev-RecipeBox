@@ -1,16 +1,12 @@
 from fastapi.testclient import TestClient
 
-from app.main import app
 
-client = TestClient(app)
-
-
-def test_create_recipe_success():
+def test_create_recipe_success(client: TestClient):
     data = {
-        "name": "Pasta",
+        "name": "Neapolitano",
         "ingredients": [
-            {"name": "spaghetti", "amount": "200g"},
-            {"name": "sauce", "amount": "100ml"},
+            {"name": "spaghetti", "amount": 200, "units": "g"},
+            {"name": "sauce", "amount": 100, "units": "g"},
         ],
         "total_time": 25,
         "description": "Classic Italian pasta.",
@@ -18,14 +14,14 @@ def test_create_recipe_success():
     r = client.post("/recipes", json=data)
     assert r.status_code == 201
     body = r.json()
-    assert body["name"] == "Pasta"
+    assert body["name"] == "Neapolitano"
     assert len(body["ingredients"]) == 2
 
 
-def test_get_recipe_success():
+def test_get_recipe_success(client: TestClient):
     data = {
         "name": "Salad",
-        "ingredients": [{"name": "lettuce", "amount": "1 head"}],
+        "ingredients": [{"name": "lettuce", "amount": 1, "units": "head"}],
         "total_time": 5,
         "description": "Green and fresh.",
     }
@@ -37,10 +33,10 @@ def test_get_recipe_success():
     assert body["description"] == "Green and fresh."
 
 
-def test_update_recipe_success():
+def test_update_recipe_success(client: TestClient):
     data = {
         "name": "Soup",
-        "ingredients": [{"name": "water", "amount": "1L"}],
+        "ingredients": [{"name": "water", "amount": 1, "units": "L"}],
         "total_time": 10,
         "description": "Simple soup.",
     }
@@ -52,12 +48,12 @@ def test_update_recipe_success():
     assert r.json()["description"] == "Hot tasty soup."
 
 
-def test_delete_recipe_success():
+def test_delete_recipe_success(client: TestClient):
     data = {
         "name": "Tea",
         "ingredients": [
-            {"name": "water", "amount": "200ml"},
-            {"name": "tea", "amount": "1 tsp"},
+            {"name": "water", "amount": 200, "units": "ml"},
+            {"name": "tea", "amount": 1, "units": "tsp"},
         ],
         "total_time": 3,
         "description": "Hot tea.",
