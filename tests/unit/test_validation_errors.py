@@ -10,7 +10,8 @@ def test_create_recipe_empty_name(client: TestClient):
     }
     r = client.post("/recipes", json=data)
     assert r.status_code == 422
-    assert r.json()["error"]["code"] == "validation_error"
+    assert r.json()["title"] == "Validation Error"
+    assert r.json()["detail"] == "pydantic error"
 
 
 def test_create_recipe_too_long_name(client: TestClient):
@@ -22,7 +23,8 @@ def test_create_recipe_too_long_name(client: TestClient):
     }
     r = client.post("/recipes", json=data)
     assert r.status_code == 422
-    assert r.json()["error"]["code"] == "validation_error"
+    assert r.json()["title"] == "Validation Error"
+    assert r.json()["detail"] == "pydantic error"
 
 
 def test_update_recipe_invalid_field_type(client: TestClient):
@@ -35,5 +37,4 @@ def test_update_recipe_invalid_field_type(client: TestClient):
     client.post("/recipes", json=data)
 
     r = client.patch("/recipes/Cake", json={"total_time": "sixty"})
-    print(r)
     assert r.status_code in (400, 422)

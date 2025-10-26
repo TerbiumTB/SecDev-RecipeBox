@@ -2,10 +2,12 @@ from typing import Any
 
 from pydantic import BaseModel
 
-# from app.models.errors import ApiError
-
 
 class ApiErrorResponse(BaseModel):
-    code: str
-    message: str
-    details: dict[str, Any]
+    type: str
+    title: str
+    status: int
+    detail: str | None
+    correlation_id: str | None
+    mask: bool
+    extensions: dict[str, Any] | None
