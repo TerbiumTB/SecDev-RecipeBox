@@ -22,7 +22,7 @@ class RecipeDB(IRecipeRepo):
             .scalar_one_or_none()
         )
         if not recipe:
-            raise NotFoundApiError(f"Recipe {name} not found")
+            raise NotFoundApiError("Recipe", name)
 
         self.session.delete(recipe)
         self.session.commit()
@@ -40,7 +40,7 @@ class RecipeDB(IRecipeRepo):
             .scalar_one_or_none()
         )
         if not recipe:
-            raise NotFoundApiError(f"Recipe {name} not found")
+            raise NotFoundApiError("Recipe", name)
 
         if ingredients is not None:
             recipe.ingredients = ingredients

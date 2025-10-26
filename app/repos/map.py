@@ -14,7 +14,7 @@ class RecipeMap(IRecipeRepo):
 
     def delete(self, name: str) -> None:
         if name not in self.map:
-            raise NotFoundApiError(f"Recipe {name} not found")
+            raise NotFoundApiError("Resipe", name)
         del self.map[name]
 
     def update(
@@ -25,7 +25,7 @@ class RecipeMap(IRecipeRepo):
         description: str | None = None,
     ) -> Recipe:
         if name not in self.map:
-            raise NotFoundApiError(f"Recipe {name} not found")
+            raise NotFoundApiError("Resipe", name)
 
         recipe = self.map[name]
         if ingredients is not None:

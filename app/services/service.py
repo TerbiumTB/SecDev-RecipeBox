@@ -23,7 +23,7 @@ class RecipeService:
         recipe = self.repo.find(name)
 
         if not recipe:
-            raise NotFoundApiError(f"Recipe {name} not found")
+            raise NotFoundApiError("Recipe", name)
 
         return recipe
 
