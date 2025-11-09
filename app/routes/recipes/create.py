@@ -32,5 +32,4 @@ def create_recipe(payload: RecipeCreate, db: Session = Depends(get_db)):
     except ApiError:
         raise
     except Exception as e:
-        print(e)
         raise InternalApiError(e)

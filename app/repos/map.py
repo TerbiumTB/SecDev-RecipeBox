@@ -9,7 +9,7 @@ class RecipeMap(IRecipeRepo):
 
     def add(self, recipe: Recipe) -> None:
         if recipe.name in self.map:
-            raise InternalApiError(f"Recipe {recipe.name} already exists")
+            raise InternalApiError(detail=f"Recipe {recipe.name} already exists")
         self.map[recipe.name] = recipe
 
     def delete(self, name: str) -> None:
