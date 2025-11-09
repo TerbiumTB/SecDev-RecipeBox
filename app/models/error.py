@@ -97,27 +97,30 @@ class NotFoundApiError(ApiError):
 
 class InternalApiError(ApiError):
     def __init__(
-        self, message: str = "internal error", correlation_id: str | None = None
+        self,
+        exc: Exception | None = None,
+        detail: str = "internal error",
+        correlation_id: str | None = None,
     ):
+        detail = str(exc) if exc else detail
         super().__init__(
             type="https://example.com/probs/internal",
             title="Internal Server Error",
             status=500,
-            detail=message,
+            detail=detail,
             correlation_id=correlation_id,
             mask=True,
         )
 
 
 class HTTPApiError(ApiError):
-    def __init__(
-        self, message: str = "internal error", correlation_id: str | None = None
-    ):
+    def __init__(self, exc: HTTPException, correlation_id: str | None = None):
+        detail = exc.detail if isinstance(exc.detail, str) else "http_error"
         super().__init__(
-            type="https://example.com/probs/internal",
+            type="https://example.com/probs/http",
             title="Internal Server Error",
-            status=500,
-            detail=message,
+            status=exc.status_code,
+            detail=detail,
             correlation_id=correlation_id,
             mask=False,
         )

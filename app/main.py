@@ -1,18 +1,12 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
-from slowapi.errors import RateLimitExceeded
-from slowapi.middleware import SlowAPIMiddleware
 
-from app.models.error import ApiError, ValidationApiError
+from app.models.error import ApiError, HTTPApiError, ValidationApiError
 from app.routes.recipes import route as recipes_route
-from app.shared.limit import limiter, rate_limit_exceeded
 
 app = FastAPI(title="RecipeBox App", version="0.1.0")
 app.include_router(recipes_route.router)
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded)
-app.add_middleware(SlowAPIMiddleware)
 
 
 @app.exception_handler(ApiError)
@@ -22,23 +16,14 @@ async def api_error_handler(request: Request, exc: ApiError):
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
-    message = exc.detail if isinstance(exc.detail, str) else "http_error"
-    err = ApiError(title="HTTP Error", status=exc.status_code, details=message)
-    # err = ApiError(
-    #     code="http_error",
-    #     message=message,
-    #     status_code=exc.status_code,
-    # )
+    err = HTTPApiError(exc)
 
     return err.to_json()
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    # extensions = exc.errors() if exc.errors() else {}
-    # message = first.get("msg", "validation error")
     err = ValidationApiError(detail="pydantic error", extensions=exc.errors())
-    # err = ApiError(code="validation_error", message=message, status_code=422)
 
     return err.to_json()
 
