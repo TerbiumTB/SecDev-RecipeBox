@@ -1,3 +1,4 @@
+import os
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,6 +8,12 @@ from app import main
 from app.schemas.orm import Base
 from app.shared.config import config
 from app.shared.sqlite import get_db
+from app.shared.limit import limiter
+
+limiter.enabled = False
+
+# # Disable rate limiting by default for all tests
+# os.environ["DISABLE_RATE_LIMIT"] = "true"
 
 mock_engine = create_engine(
     config.MOCK_DATABASE_URL, connect_args={"check_same_thread": False}
