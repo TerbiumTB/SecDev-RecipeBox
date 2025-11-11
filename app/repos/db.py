@@ -64,7 +64,5 @@ class RecipeDB(IRecipeRepo):
         return None
 
     def all(self) -> list[Recipe]:
-        recipes = list(
-            self.session.execute(select(orm.Recipe)).unique().scalars().all()
-        )
+        recipes = list(self.session.execute(select(orm.Recipe)).unique().scalars().all())
         return [*map(orm.Recipe.to_entity, recipes)]

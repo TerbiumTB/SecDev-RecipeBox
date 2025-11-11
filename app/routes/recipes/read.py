@@ -35,6 +35,8 @@ _responses = {
     429: {"model": ApiErrorResponse, "description": "Rate limit exceeded"},
     500: {"model": ApiErrorResponse, "description": "Internal error"},
 }
+
+
 @router.get("/{name}", response_model=RecipeOut, responses=_responses)
 @limiter.limit("5/minute")
 def read_recipe(request: Request, name: str, db: Session = Depends(get_db)):

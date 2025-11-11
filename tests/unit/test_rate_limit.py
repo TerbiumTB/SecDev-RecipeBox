@@ -1,9 +1,10 @@
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
+
 
 @pytest.mark.ratelimit
 def test_get_recipes_rate_limit_exceed(client: TestClient):
-    for _ in range(5): 
+    for _ in range(5):
         r = client.get("/recipes")
         assert r.status_code != 429
 
@@ -13,13 +14,12 @@ def test_get_recipes_rate_limit_exceed(client: TestClient):
 
 @pytest.mark.ratelimit
 def test_get_recipe_rate_limit_exceed(client: TestClient):
-    for _ in range(5): 
+    for _ in range(5):
         r = client.get("/recipes/SomeRecipe")
         assert r.status_code != 429
 
     r = client.get("/recipes/SomeRecipe")
     assert r.status_code == 429
-
 
 
 @pytest.mark.ratelimit
@@ -34,13 +34,14 @@ def test_create_recipe_rate_limit_exceed(client: TestClient):
         "description": "Classic Italian pasta.",
     }
 
-    for i in range(5): 
+    for i in range(5):
         data["name"] = f"Neopolitano{i}"
         r = client.post("/recipes", json=data)
         assert r.status_code != 429
 
     r = client.post("/recipes", json=data)
     assert r.status_code == 429
+
 
 @pytest.mark.ratelimit
 def test_update_recipe_rate_limit_exceed(client: TestClient):
@@ -54,15 +55,16 @@ def test_update_recipe_rate_limit_exceed(client: TestClient):
 
     update_data = {"description": "Hot tasty soup."}
 
-    for i in range(5): 
+    for i in range(5):
         r = client.patch("/recipes/Soup", json=update_data)
         assert r.status_code != 429
 
     r = client.patch("/recipes/Soup", json=update_data)
     assert r.status_code == 429
 
+
 @pytest.mark.ratelimit
-def test_update_recipe_rate_limit_exceed(client: TestClient):
+def test_delete_recipe_rate_limit_exceed(client: TestClient):
     data = {
         "name": "Tea",
         "ingredients": [
@@ -74,7 +76,7 @@ def test_update_recipe_rate_limit_exceed(client: TestClient):
     }
     client.post("/recipes", json=data)
 
-    for i in range(5): 
+    for i in range(5):
         r = client.delete("/recipes/Tea")
         assert r.status_code != 429
 

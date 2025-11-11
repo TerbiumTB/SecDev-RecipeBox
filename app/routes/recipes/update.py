@@ -21,7 +21,9 @@ _responses = {
 
 @router.patch("/{name}", response_model=RecipeOut, responses=_responses)
 @limiter.limit("5/minute")
-def update_recipe(request: Request, name: str, payload: RecipeUpdate, db: Session = Depends(get_db)):
+def update_recipe(
+    request: Request, name: str, payload: RecipeUpdate, db: Session = Depends(get_db)
+):
     try:
         repo = RecipeDB(db)
         service = RecipeService(repo)

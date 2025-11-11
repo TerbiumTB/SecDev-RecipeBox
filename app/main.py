@@ -1,21 +1,26 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
-from app.models.error import ApiError, ValidationApiError, HTTPApiError, RateLimitApiError
+from app.models.error import ApiError, HTTPApiError, RateLimitApiError, ValidationApiError
 from app.routes.recipes import route as recipes_route
 from app.shared.limit import limiter
-from slowapi.middleware import SlowAPIMiddleware
-from slowapi.errors import RateLimitExceeded
 
 app = FastAPI(title="RecipeBox App", version="0.1.0")
 app.include_router(recipes_route.router)
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
+# app.add_exception_handler(ApiError, api_error_handler)
+# app.add_exception_handler(HTTPException, http_exception_handler)
+
+
 @app.exception_handler(ApiError)
 async def api_error_handler(request: Request, exc: ApiError):
     return exc.to_json()
+
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
@@ -23,19 +28,21 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
     return err.to_json()
 
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     err = ValidationApiError(detail="pydantic error", extensions=exc.errors())
 
     return err.to_json()
 
+
 @app.exception_handler(RateLimitExceeded)
 async def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
     client_ip = request.client.host
-    
+
     if client_ip in ("127.0.0.1", "::1"):
         return None
-    
+
     err = RateLimitApiError(exc)
     return err.to_json()
 

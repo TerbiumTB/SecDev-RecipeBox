@@ -3,7 +3,6 @@ from uuid import uuid4
 
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
-
 from slowapi.errors import RateLimitExceeded
 
 
@@ -84,9 +83,7 @@ class NotFoundApiError(ApiError):
         identifier: Any = None,
         correlation_id: str | None = None,
     ):
-        detail = f"{resource} not found" + (
-            f": {identifier}" if identifier is not None else ""
-        )
+        detail = f"{resource} not found" + (f": {identifier}" if identifier is not None else "")
         super().__init__(
             type="https://example.com/probs/not-found",
             title="Not Found",
@@ -116,9 +113,7 @@ class InternalApiError(ApiError):
 
 
 class HTTPApiError(ApiError):
-    def __init__(
-        self, exc: HTTPException, correlation_id: str | None = None
-    ):
+    def __init__(self, exc: HTTPException, correlation_id: str | None = None):
         detail = exc.detail if isinstance(exc.detail, str) else "http_error"
         super().__init__(
             type="https://example.com/probs/http",
@@ -129,10 +124,9 @@ class HTTPApiError(ApiError):
             mask=False,
         )
 
+
 class RateLimitApiError(ApiError):
-    def __init__(
-        self, exc: RateLimitExceeded, correlation_id: str | None = None
-    ):
+    def __init__(self, exc: RateLimitExceeded, correlation_id: str | None = None):
         detail = exc.detail if isinstance(exc.detail, str) else "rate_limit_excededed"
         super().__init__(
             type="https://example.com/probs/rate-limit",
