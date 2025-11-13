@@ -1,7 +1,3 @@
-init:
-	pip install -r requirements-dev.txt
-	pre-commit install
-
 lint:
 	ruff check --fix .
 	black .
@@ -16,5 +12,25 @@ coverage:
 check: lint test
 	pre-commit run --all-files
 
-run:
+local:
 	uvicorn app.main:app --reload
+
+build:
+	docker-compose build --no-cache
+
+stop:
+	docker-compose down
+
+clean:
+	docker-compose down -v --remove-orphans
+
+run:
+	docker-compose up -d
+
+rerun: | stop run
+
+start: | build run
+
+restart: | stop start
+
+fresh: | clean start

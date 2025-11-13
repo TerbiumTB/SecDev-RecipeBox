@@ -1,5 +1,8 @@
+import os
 import sys
 from pathlib import Path
+
+os.environ["APP_ENV"] = "test"
 
 
 def pytest_configure(config):
