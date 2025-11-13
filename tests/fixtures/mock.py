@@ -6,11 +6,15 @@ from sqlalchemy.orm import sessionmaker
 from app import main
 from app.schemas.orm import Base
 from app.shared.config import config
+from app.shared.limit import limiter
 from app.shared.sqlite import get_db
 
-mock_engine = create_engine(
-    config.MOCK_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+limiter.enabled = False
+
+# # Disable rate limiting by default for all tests
+# os.environ["DISABLE_RATE_LIMIT"] = "true"
+
+mock_engine = create_engine(config.MOCK_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(bind=mock_engine, autoflush=False, autocommit=False)
 
 

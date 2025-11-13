@@ -1,8 +1,3 @@
-ifneq (,$(wildcard ./.env))
-    include .env
-    export
-endif
-
 init:
 	pip install -r requirements-dev.txt
 	pre-commit install

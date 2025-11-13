@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 
 
 class ApiError(Exception):
@@ -31,7 +32,7 @@ class ApiError(Exception):
         return self.detail
 
     def to_problem(self) -> dict[str,]:
-        detail = self._masked_detail() if self.mask else self.detail
+        detail = self._mask_detail() if self.mask else self.detail
 
         problem = {
             "type": self.type,
@@ -82,14 +83,12 @@ class NotFoundApiError(ApiError):
         identifier: Any = None,
         correlation_id: str | None = None,
     ):
-        msg = f"{resource} not found" + (
-            f": {identifier}" if identifier is not None else ""
-        )
+        detail = f"{resource} not found" + (f": {identifier}" if identifier is not None else "")
         super().__init__(
             type="https://example.com/probs/not-found",
             title="Not Found",
             status=404,
-            detail=msg,
+            detail=detail,
             correlation_id=correlation_id,
             mask=False,
         )
@@ -118,9 +117,21 @@ class HTTPApiError(ApiError):
         detail = exc.detail if isinstance(exc.detail, str) else "http_error"
         super().__init__(
             type="https://example.com/probs/http",
-            title="Internal Server Error",
+            title="HTTP Error",
             status=exc.status_code,
             detail=detail,
             correlation_id=correlation_id,
             mask=False,
+        )
+
+
+class RateLimitApiError(ApiError):
+    def __init__(self, exc: RateLimitExceeded, correlation_id: str | None = None):
+        detail = exc.detail if isinstance(exc.detail, str) else "rate_limit_excededed"
+        super().__init__(
+            type="https://example.com/probs/rate-limit",
+            title="Rate Limit Exceeded",
+            status=429,
+            detail=detail,
+            correlation_id=correlation_id,
         )

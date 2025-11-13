@@ -47,8 +47,7 @@ class RecipeOut(BaseModel):
         return self(
             name=recipe.name,
             ingredients=[
-                IngredientOut.from_entity(ingredient)
-                for ingredient in recipe.ingredients
+                IngredientOut.from_entity(ingredient) for ingredient in recipe.ingredients
             ],
             total_time=recipe.total_time,
             description=recipe.description,
