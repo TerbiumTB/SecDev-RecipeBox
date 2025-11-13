@@ -6,8 +6,8 @@ from app.models.error import ApiError, InternalApiError
 from app.repos.db import RecipeDB
 from app.schemas.error import ApiErrorResponse
 from app.services.service import RecipeService
+from app.shared.db import get_db
 from app.shared.limit import limiter
-from app.shared.sqlite import get_db
 
 router = APIRouter()
 
