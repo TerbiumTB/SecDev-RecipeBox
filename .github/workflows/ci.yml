@@ -61,7 +61,6 @@ jobs:
 
       - run: make ci-test
         env:
-          DATABASE_URL: "sqlite:///:memory:"
           MOCK_DATABASE_URL: "sqlite:///:memory:"
           APP_ENV: "test"
           LOG_LEVEL: "INFO"
