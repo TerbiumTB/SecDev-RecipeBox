@@ -5,16 +5,15 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from app.models.error import ApiError, HTTPApiError, RateLimitApiError, ValidationApiError
+from app.routes.health import route as health_route
 from app.routes.recipes import route as recipes_route
 from app.shared.limit import limiter
 
 app = FastAPI(title="RecipeBox App", version="0.1.0")
 app.include_router(recipes_route.router)
+app.include_router(health_route.router)
 app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
-
-# app.add_exception_handler(ApiError, api_error_handler)
-# app.add_exception_handler(HTTPException, http_exception_handler)
 
 
 @app.exception_handler(ApiError)
@@ -45,12 +44,6 @@ async def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
 
     err = RateLimitApiError(exc)
     return err.to_json()
-
-
-@app.get("/health")
-@limiter.limit("5/minute")
-def health(request: Request):
-    return {"status": "ok"}
 
 
 def custom_openapi():

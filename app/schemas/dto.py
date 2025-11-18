@@ -3,6 +3,10 @@ from pydantic import BaseModel, Field
 from app.models.domain import Ingredient, Recipe
 
 
+class Health(BaseModel):
+    status: dict[str, str]
+
+
 class IngredientIn(BaseModel):
     name: str = Field(..., min_length=1)
     amount: int = Field(..., gt=0)
