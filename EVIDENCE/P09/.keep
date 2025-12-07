@@ -1,0 +1,2 @@
+# This directory contains SBOM and SCA artifacts for P09 practice
+# Files are generated automatically by .github/workflows/ci-sbom-sca.yml
