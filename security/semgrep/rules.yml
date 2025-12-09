@@ -1,0 +1,77 @@
+rules:
+  - id: py-unsafe-sql-string-format
+    languages: [python]
+    message: "Потенциально небезопасное форматирование SQL-запросов. Используйте параметризованные запросы SQLAlchemy."
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: |
+              f"SELECT ... {$X} ..."
+          - pattern: |
+              "SELECT ... " + $X + " ..."
+          - pattern: |
+              "SELECT ... %s ..." % $X
+    metadata:
+      category: security
+      cwe: "CWE-89: SQL Injection"
+      confidence: MEDIUM
+
+  - id: py-exception-detail-exposure
+    languages: [python]
+    message: "Потенциальная утечка деталей исключений в ответах API. Убедитесь, что детали исключений не раскрывают внутреннюю структуру приложения."
+    severity: WARNING
+    patterns:
+      - pattern: |
+          except Exception as $E:
+            ...
+            return {"error": str($E), ...}
+    metadata:
+      category: security
+      cwe: "CWE-209: Information Exposure Through an Error Message"
+      confidence: MEDIUM
+
+  - id: py-hardcoded-secret
+    languages: [python]
+    message: "Потенциально захардкоженный секрет. Используйте переменные окружения или секреты из vault."
+    severity: ERROR
+    patterns:
+      - pattern-either:
+          - pattern: |
+              password = "..."
+          - pattern: |
+              password = '...'
+          - pattern: |
+              secret = "..."
+          - pattern: |
+              secret = '...'
+          - pattern: |
+              api_key = "..."
+          - pattern: |
+              api_key = '...'
+          - pattern: |
+              token = "..."
+          - pattern: |
+              token = '...'
+    filters:
+      - pattern-not-inside: |
+          $VAR = os.getenv(...)
+          ...
+      - pattern-not-inside: |
+          $VAR = os.environ.get(...)
+          ...
+    metadata:
+      category: security
+      cwe: "CWE-798: Use of Hard-coded Credentials"
+      confidence: MEDIUM
+
+  - id: py-unsafe-html-echo
+    languages: [python]
+    message: "Потенциально небезопасный вывод пользовательских данных в HTMLResponse"
+    severity: WARNING
+    patterns:
+      - pattern: |
+          HTMLResponse(f"...{$X}...")
+    metadata:
+      category: security
+      cwe: "CWE-79: Cross-site Scripting"
+      confidence: MEDIUM

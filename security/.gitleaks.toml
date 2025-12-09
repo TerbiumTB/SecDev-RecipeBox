@@ -1,0 +1,25 @@
+title = "RecipeBox Gitleaks Configuration"
+
+[extend]
+# Используем встроенные правила по умолчанию
+
+[allowlist]
+description = "ignore non-sensitive patterns"
+paths = [
+  "EVIDENCE/.*",   # отчёты и артефакты
+  ".*/__pycache__/.*",
+  ".*\\.pyc$",
+  "\\.github/.*",
+  "docs/.*",
+  "tests/.*",
+  "requirements.*\\.txt$",
+  "requirements.*\\.lock$",
+]
+
+commits = []
+
+regexes = [
+  '''TEST_SECRET_DO_NOT_USE''',
+  '''POSTGRES_PASSWORD''',  # это переменная окружения, не реальный пароль
+  '''MOCK_DATABASE_URL''',  # тестовые URL
+]
