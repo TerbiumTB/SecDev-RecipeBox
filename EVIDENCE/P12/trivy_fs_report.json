@@ -1,0 +1,16 @@
+{
+  "SchemaVersion": 2,
+  "ReportID": "019b1e75-1fc7-7129-abd0-df8ae5cdb30a",
+  "CreatedAt": "2025-12-14T20:02:30.983077201Z",
+  "ArtifactID": "sha256:92a31da7399f8e2790896f274bae7a1902c236320af7f0980905034c7ef6591b",
+  "ArtifactName": "/work",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "https://github.com/TerbiumTB/SecDev-RecipeBox",
+    "Branch": "p12-iac-container",
+    "Commit": "1f84437c2d723c473468258903364f4e80a61d43",
+    "CommitMsg": "buuuuug fixes",
+    "Author": "Тимофей Булгаков \u003cttbulgakov@edu.hse.ru\u003e",
+    "Committer": "Тимофей Булгаков \u003cttbulgakov@edu.hse.ru\u003e"
+  }
+}
