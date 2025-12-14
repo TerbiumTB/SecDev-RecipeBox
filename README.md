@@ -10,6 +10,7 @@ make start
 ```
 Open API находится по адресу: http://127.0.0.1:8000/docs#
 
+
 ### Ритуал перед PR
 ```bash
 make lint
