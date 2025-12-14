@@ -31,7 +31,7 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
 
-          DATABASE_URL: postgresql+psycopg2://${{secrets.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@${{secrets.DB_HOST}}:${{secrets.DB_PORT}}/${{secrets.POSTGRES_DB}}
+          DATABASE_URL: postgresql+psycopg2://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${DB_HOST}:${secrets.DB_PORT}/${{secrets.POSTGRES_DB}}
 
 
         ports:
@@ -71,7 +71,7 @@ jobs:
           DB_HOST: localhost
           DB_PORT: 5432
 
-          DATABASE_URL: postgresql+psycopg2://${{secrets.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@${{secrets.DB_HOST}}:${{secrets.DB_PORT}}/${{secrets.POSTGRES_DB}}
+          DATABASE_URL: postgresql+psycopg2://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@${DB_HOST}:${secrets.DB_PORT}/${{secrets.POSTGRES_DB}}
 
 
         run: |
