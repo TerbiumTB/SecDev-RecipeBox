@@ -79,22 +79,17 @@ jobs:
           if [ -f zap_baseline.html ]; then mv zap_baseline.html EVIDENCE/P11/; fi
           if [ -f zap_baseline.json ]; then mv zap_baseline.json EVIDENCE/P11/; fi
 
+      - name: Commit evidence
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add EVIDENCE/P11/
+          git diff --staged --quiet || git commit -m "update DAST evidence [skip ci]"
+          git push
+
       - name: Upload P11 evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: P11_EVIDENCE
           path: EVIDENCE/P11
-
-      - name: Commit evidence files
-        if: always()
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add EVIDENCE/P11/
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore: update P11 DAST evidence [skip ci]"
-            git push
-          fi
