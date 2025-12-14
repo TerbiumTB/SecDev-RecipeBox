@@ -1,4 +1,4 @@
-name: Security - DAST (P11, ZAP baseline)
+name: Security - DAST & ZAP
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  dast_p11:
+  dast:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -27,6 +27,13 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
+          DB_HOST: ${{vars.DB_HOST}}
+          DB_PORT: ${{vars.DB_PORT}}
+
+          DATABASE_URL: postgresql+psycopg2://${{secrets.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@${{vars.DB_HOST}}:${{vars.DB_PORT}}/${{secrets.POSTGRES_DB}}
+
+
         ports:
           - 5432:5432
         options: >-
@@ -56,14 +63,17 @@ jobs:
         env:
           APP_ENV: ci
           LOG_LEVEL: INFO
+
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
-          DB_HOST: localhost
-          DB_PORT: 5432
+          DB_HOST: ${{vars.DB_HOST}}
+          DB_PORT: ${{vars.DB_PORT}}
 
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgresql+psycopg2://${{secrets.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@${{vars.DB_HOST}}:${{vars.DB_PORT}}/${{secrets.POSTGRES_DB}}
+
+
         run: |
           uvicorn app.main:app --host 0.0.0.0 --port 8000 &
           timeout 30 bash -c 'until curl -sf http://localhost:8000/health/; do sleep 1; done'
@@ -76,8 +86,7 @@ jobs:
               -r zap_baseline.html \
               -J zap_baseline.json \
               -d || true
-          if [ -f zap_baseline.html ]; then mv zap_baseline.html EVIDENCE/P11/; fi
-          if [ -f zap_baseline.json ]; then mv zap_baseline.json EVIDENCE/P11/; fi
+          mv zap_baseline.* EVIDENCE/P11/ || true
 
       - name: Commit evidence
         run: |
