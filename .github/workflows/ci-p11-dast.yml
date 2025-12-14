@@ -80,7 +80,7 @@ jobs:
 
       - name: ZAP Baseline
         run: |
-          docker run --rm --network host -v $PWD:/zap/wrk ghcr.io/zaproxy/zaproxy:stable \
+          docker run --rm --user root --network host -v $PWD:/zap/wrk ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
               -t http://localhost:8000/health/ \
               -r zap_baseline.html \
