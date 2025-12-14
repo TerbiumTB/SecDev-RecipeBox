@@ -54,7 +54,7 @@ jobs:
       - name: Trivy scan
         run: |
           docker run --rm -v $(pwd):/work aquasec/trivy \
-            config --format json /work/Dockerfile > EVIDENCE/P12/trivy_config_report.json || true`
+            config --format json /work/Dockerfile > EVIDENCE/P12/trivy_config_report.json || true
           docker run --rm -v $(pwd):/work aquasec/trivy \
             filesystem --format json --scanners vuln /work > EVIDENCE/P12/trivy_fs_report.json || true
 
