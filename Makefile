@@ -56,13 +56,31 @@ ci: ci-lint ci-security ci-test
 
 #DAST
 dast-local:
-	@echo "Starting ZAP baseline scan..."
-	@mkdir -p EVIDENCE/P11
-	@docker run --rm --network host -v $$PWD:/zap/wrk ghcr.io/zaproxy/zaproxy:stable \
+	echo "Starting ZAP baseline scan..."
+	mkdir -p EVIDENCE/P11
+	docker run --rm --network host -v $$PWD:/zap/wrk ghcr.io/zaproxy/zaproxy:stable \
 		zap-baseline.py \
 		-t http://localhost:8000/health \
 		-r zap_baseline.html \
 		-J zap_baseline.json \
 		-d || true
-	@mv zap_baseline.* EVIDENCE/P11/ || true
-	@echo "ZAP scan completed. Reports saved to EVIDENCE/P11/"
+	mv zap_baseline.* EVIDENCE/P11/ || true
+	echo "ZAP scan completed. Reports saved to EVIDENCE/P11/"
+
+hadolint:
+	docker run --rm -i hadolint/hadolint < Dockerfile \
+	| tee hadolint_output.txt
+
+chekov:
+	docker run --rm -v $PWD:/work bridgecrew/checkov \
+		-d /work/iac \
+		-o json \
+		--compact > EVIDENCE/P12/checkov_report.json
+
+trivy:
+	docker build -t myapp:local .
+
+	docker run --rm -v $PWD:/work aquasec/trivy \
+	image myapp:local \
+		--format json \
+		--output /work/EVIDENCE/P12/trivy_report.json
