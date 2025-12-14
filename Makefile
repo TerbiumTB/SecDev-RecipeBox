@@ -53,3 +53,16 @@ ci-security:
 	safety check --json --output safety-report.json || true
 
 ci: ci-lint ci-security ci-test
+
+#DAST
+dast-local:
+	@echo "Starting ZAP baseline scan..."
+	@mkdir -p EVIDENCE/P11
+	@docker run --rm --network host -v $$PWD:/zap/wrk ghcr.io/zaproxy/zaproxy:stable \
+		zap-baseline.py \
+		-t http://localhost:8000/health \
+		-r zap_baseline.html \
+		-J zap_baseline.json \
+		-d || true
+	@mv zap_baseline.* EVIDENCE/P11/ || true
+	@echo "ZAP scan completed. Reports saved to EVIDENCE/P11/"
