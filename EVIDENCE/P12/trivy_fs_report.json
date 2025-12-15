@@ -1,16 +1,16 @@
 {
   "SchemaVersion": 2,
-  "ReportID": "019b1e75-1fc7-7129-abd0-df8ae5cdb30a",
-  "CreatedAt": "2025-12-14T20:02:30.983077201Z",
-  "ArtifactID": "sha256:92a31da7399f8e2790896f274bae7a1902c236320af7f0980905034c7ef6591b",
+  "ReportID": "019b22e9-a9e8-7a0d-bc1d-f10c8f5937b8",
+  "CreatedAt": "2025-12-15T16:48:17.384659728Z",
+  "ArtifactID": "sha256:cd8096ff060124494faa8d230bff6c7ae2cfcb92fcfc846a6fe82ed6cf0c8ea4",
   "ArtifactName": "/work",
   "ArtifactType": "repository",
   "Metadata": {
     "RepoURL": "https://github.com/TerbiumTB/SecDev-RecipeBox",
-    "Branch": "p12-iac-container",
-    "Commit": "1f84437c2d723c473468258903364f4e80a61d43",
-    "CommitMsg": "buuuuug fixes",
-    "Author": "Тимофей Булгаков \u003cttbulgakov@edu.hse.ru\u003e",
-    "Committer": "Тимофей Булгаков \u003cttbulgakov@edu.hse.ru\u003e"
+    "Branch": "main",
+    "Commit": "3e603a3ed7054c9b41feb8db099d7255190e60ca",
+    "CommitMsg": "Merge pull request p12 -\u003e main\n\nIaC and Containers",
+    "Author": "TerbiumTB \u003c143883509+TerbiumTB@users.noreply.github.com\u003e",
+    "Committer": "GitHub \u003cnoreply@github.com\u003e"
   }
 }
