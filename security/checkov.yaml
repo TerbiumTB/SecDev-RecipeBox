@@ -1,0 +1,9 @@
+quiet: false
+compact: true
+framework:
+  - dockerfile
+  - yaml
+
+skip-check:
+  - CKV_DOCKER_1  # Ensure port 22 is not exposed
+  - CKV_DOCKER_2  # Ensure that sudo is not used
